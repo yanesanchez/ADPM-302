@@ -87,12 +87,13 @@ function setup() {
 }
 
 function draw() {
-  topMapClr = map(mouseY, 0, 30, width, height);
-  topMapAlph = map(mouseY, width, height, 0, 255);
+  background(250);
+  topMapClr = map(mouseY, 0, 255, 0, height);
+  topMapAlph = map(mouseY, 0, height, 0, 255);
   midMapAlph = map(mouseY, 255, 0, 0, 10);
   midMapClrWB = map(mouseY, 255, 0, 0, 7);  // white -> black  
   midMapClrBW = map(mouseY, 0, 255, 0, 7);  // black -> white
-  background(250);
+  
   
   // ----------------- BACKGROUND LAYER --------------------
   // <<< lotus pose silhouette >>>
@@ -184,7 +185,7 @@ function draw() {
 */  
   // MIDDLE LAYER ---------------
   // <<< mountain range type thing >>>
-  topLyr.fill(0);
+  //topLyr.fill(0);
   topLyr.rect(0, height - 100, width, 75);
   topLyr.triangle(-40, height/4*3, width + 40, height/4*3, width/2, height/4 - 20);
   topLyr.fill(0);
@@ -204,13 +205,15 @@ function mousePressed() {
   // fades out the top-most layer
   if (!toptopLyr.background(0) || topMapAlph > 0) {
     toptopLyr.background(topMapAlph);  // refresh background w/ new alpha
+    console.log(topMapAlph);
   } // fades out the vague mountain range
   //if (topMapAlph <= 0 || midMapClrBW <= 255) {
    // topLyr.background(midMapClrWB);
     //topLyr.fill(midMapClrBW);
   //}
   // testing
-  console.log("i am pressed" + clicks);
+  console.log("i am pressed");
+  console.log(mouseX + " " + mouseY);
   return false;
 }
 
