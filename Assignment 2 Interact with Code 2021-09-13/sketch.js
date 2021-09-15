@@ -3,7 +3,9 @@
 // ======================= VARIABLES =======================
 let canvasHeight, canvasWidth, chakraHeight, chakraWidth;
 let chakraLyrs, topLyr, toptopLyr, value, topVal, topClr, wand;
-let topMapAlph, topMapClr, midMapAlph, midMapClrWB, midMapClrBW;
+let topMapAlph, topMapClr, midMapAlph, midMapClrWB, midMapClrBW, temp;
+let isCleared = false, hasClicked = false, clickCount = 0;
+let button, tri, sun;
 let chakras = [
   {
     name: "root",
@@ -72,27 +74,45 @@ function setup() {
   canvasHeight = 640;
   chakraWidth = 21;
   chakraHeight = 21;
+  // layers
   createCanvas(canvasWidth, canvasHeight);  // base
   topLyr = createGraphics(canvasWidth, canvasHeight);  // middle
   toptopLyr = createGraphics(canvasWidth, canvasHeight);  // top-most
+  // color & opacity variables
   alph = 255;  // top-most layer alpha iterator
   alph2  = 255;  // middle layer alpha iterator
- 
   topClr = topMapAlph; //color(0, 0, 0, alph);  // top-most layer color
   tClr = midMapClrWB;  // middle mt layer background
   tClr2 = midMapAlph;  // middle mt layer foreground
   toptopLyr.background(0);  // top-most layer
-  topLyr.background(160);  // middle layer
+  //topLyr.background(160);  // middle layer
   
+    // MIDDLE LAYER
+  // <<< mountain range type thing >>>
+  topLyr.fill(0);  
+  // bottom black button
+  button = topLyr.rect(45, height - 90, width - 90, 90);
+  // middle black triangle
+  tri = topLyr.triangle(-50, height - 150, width + 50, height - 150, width/2, height/4 - 15);
+  topLyr.strokeWeight(5);
+  // top black circle
+  sun = topLyr.ellipse(width/2, height/9, 75, 75);
+  
+  
+  // TOP-MOST ---------------
+  image(toptopLyr, 0, 0);
+  fill(255, 160);
+  isCleared = false;
 }
 
+// DRAW ----------------------*******************
 function draw() {
-  topMapClr = map(mouseY, 0, 30, width, height);
-  topMapAlph = map(mouseY, width, height, 0, 255);
-  midMapAlph = map(mouseY, 255, 0, 0, 10);
-  midMapClrWB = map(mouseY, 255, 0, 0, 7);  // white -> black  
-  midMapClrBW = map(mouseY, 0, 255, 0, 7);  // black -> white
-  background(250);
+  if(!isCleared){
+  background(255);
+  }
+  topMapClr = map(mouseY, 0, height, 0, 225);
+  topMapAlph = map(topMapClr, 0, height, 0, 255);
+  midMapAlph = map(clickCount, 0, 30, 0, 255);
   
   // ----------------- BACKGROUND LAYER --------------------
   // <<< lotus pose silhouette >>>
@@ -167,7 +187,7 @@ function draw() {
   // 0: red, 1: orange, 2: yellow, 3: green, 4: blue, 5: indigo, 6: violet
   // BASE LAYER -------------
   // draws ellipses for each chakra & sets shape properties
-  for (let i = 0; i < chakras.length; i++){
+  for (let i = 0; i < chakras.length; i++) {
     stroke(color(255, random(0, 100)));  // glow-y effect
     strokeWeight(random(0, 7));  // slight veriations in circle size
     fill(chakras[i]._color.hex);
@@ -182,39 +202,73 @@ function draw() {
   // THIRD EYE LAYER  
   // CROWN LAYER
 */  
-  // MIDDLE LAYER ---------------
-  // <<< mountain range type thing >>>
-  topLyr.fill(0);
-  topLyr.rect(0, height - 100, width, 75);
-  topLyr.triangle(-40, height/4*3, width + 40, height/4*3, width/2, height/4 - 20);
-  topLyr.fill(0);
-  topLyr.strokeWeight(5);
-  topLyr.ellipse(width/2, height/8, 75, 75);
+  // layer rendering
+  if(!isCleared){  // wont keep rendering canvas after it's been cleared
+    image(toptopLyr, 0, 0);  // top-most layer
+    image(topLyr, 0, 0);  // middle layer
+  }
   
-  image(topLyr, 0, 0);
-  image(toptopLyr, 0, 0);
-  fill(255, 160);
-  wand = ellipse(mouseX, mouseY, 15, 15);
+  // pointer
+  fill(255, random(120, 160));
+  stroke(255, random(90, 160));
+  strokeWeight(random(3, 20)); 
+  wand = ellipse(mouseX, mouseY, 15, 15);  // circle follows pointer
 }
 
 // ======================== EVENTS =========================
-let clicks = 0;
+temp = 0;
 function mousePressed() {
-  // *** SHOULD REALLY USE MAP()
-  // fades out the top-most layer
-  if (!toptopLyr.background(0) || topMapAlph > 0) {
-    toptopLyr.background(topMapAlph);  // refresh background w/ new alpha
-  } // fades out the vague mountain range
-  //if (topMapAlph <= 0 || midMapClrBW <= 255) {
-   // topLyr.background(midMapClrWB);
-    //topLyr.fill(midMapClrBW);
-  //}
+  
+  midMapAlph = map(clickCount, 0, 30, 255, 0);
+  // TOP LAYER --------------- 
+  //topLyr.rect(45, height - 90,  width - 90, 90); - ~ middle layer reference
+  if(!isCleared){ // checks if top-most layer has been cleared
+    toptopLyr.background(topMapClr, topMapAlph);
+    // checks if mouse is within the bounds of the black rect "button"
+    if((mouseY >= height-90 && mouseY <= height) && (mouseX <= width-45 && mouseX >= 45)){
+      console.log("BOX HAS BEEN CLICKED");
+      clickCount++;
+      if (!isCleared && clickCount >= 13){  // button has to be clicked 13 times for canvas to clear
+          toptopLyr.clear();
+          isCleared = true;  // lets you move onto the next layer
+          console.log("-- ALL CLEAR --");
+        }
+     }
+  // MIDDLE LAYER ------------
+  } else if (isCleared && clickCount >= 13) {
+        //temp = midMapAlph * -1;
+        topLyr.tint(255, map(clickCount, 14, 30, 255, 0)); 
+      // redraw shapes with new opacities
+    fill(0, map(clickCount, 14, 30, 0, 255));
+        topLyr.rect(45, height - 90, width - 90, 90);  // bottom black button
+        // middle black triangle
+        topLyr.triangle(-50, height - 150, width + 50, height - 150, width/2, height/4 - 15);
+        topLyr.strokeWeight(5);
+        topLyr.ellipse(width/2, height/9, 75, 75);  // top black circle
+        clickCount++;
+    //image(topLyr, 0, 0);  // middle layer
+  } else {
+  }
+  
   // testing
-  console.log("i am pressed" + clicks);
+  console.log("isCleared: " + isCleared);
+  console.log("click count: " + clickCount);
+  //console.log("topMapClr: " + topMapClr + "");
+  console.log("midMapAlph:" + midMapAlph + " ");
   return false;
 }
 
+let bonusClr, r;
+function mouseDragged(){
+  r = floor(random(7));
+  bonusClr = chakras[r]._color.hex;
+  background(bonusClr);
+  
+}
+
 // ----------------------- OTHER STUFF ---------------------
+
+
 
 // Chakra object
 var chakra = {
