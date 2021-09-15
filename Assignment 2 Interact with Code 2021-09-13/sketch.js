@@ -3,7 +3,7 @@
 // ======================= VARIABLES =======================
 let canvasHeight, canvasWidth, chakraHeight, chakraWidth;
 let chakraLyrs, topLyr, toptopLyr, value, topVal, topClr, wand;
-let topMapAlph, topMapClr, midMapAlph, midMapClrWB, midMapClrBW;
+let topMapAlph, topMapClr, midMapAlph, midMapClrWB, midMapClrBW, temp;
 let chakras = [
   {
     name: "root",
@@ -82,17 +82,31 @@ function setup() {
   tClr = midMapClrWB;  // middle mt layer background
   tClr2 = midMapAlph;  // middle mt layer foreground
   toptopLyr.background(0);  // top-most layer
-  topLyr.background(160);  // middle layer
+  //topLyr.background(160);  // middle layer
   
+    // MIDDLE LAYER
+  // <<< mountain range type thing >>>
+  topLyr.fill(0);  
+  topLyr.rect(0, height - 100, width, 75);
+  topLyr.triangle(-40, height/4*3, width + 40, height/4*3, width/2, height/4 - 20);
+  topLyr.strokeWeight(5);
+  topLyr.ellipse(width/2, height/8, 75, 75);
+  
+  
+  // TOP-MOST ---------------
+  image(toptopLyr, 0, 0);
+  fill(255, 160);
 }
 
+// DRAW ----------------------*******************
 function draw() {
-  topMapClr = map(mouseY, 0, 30, width, height);
-  topMapAlph = map(mouseY, width, height, 0, 255);
-  midMapAlph = map(mouseY, 255, 0, 0, 10);
-  midMapClrWB = map(mouseY, 255, 0, 0, 7);  // white -> black  
-  midMapClrBW = map(mouseY, 0, 255, 0, 7);  // black -> white
   background(250);
+  topMapClr = map(mouseY, 0, height, 0, 225);
+  topMapAlph = map(topMapClr, 0, height, 0, 255);
+  //midMapAlph = map(mouseY, 255, 0, 0, 10);
+  //midMapClrWB = map(mouseY, 255, 0, 0, 7);  // white -> black  
+  //midMapClrBW = map(mouseY, 0, 255, 0, 7);  // black -> white
+  
   
   // ----------------- BACKGROUND LAYER --------------------
   // <<< lotus pose silhouette >>>
@@ -182,37 +196,36 @@ function draw() {
   // THIRD EYE LAYER  
   // CROWN LAYER
 */  
-  // MIDDLE LAYER ---------------
-  // <<< mountain range type thing >>>
-  topLyr.fill(0);
-  topLyr.rect(0, height - 100, width, 75);
-  topLyr.triangle(-40, height/4*3, width + 40, height/4*3, width/2, height/4 - 20);
-  topLyr.fill(0);
-  topLyr.strokeWeight(5);
-  topLyr.ellipse(width/2, height/8, 75, 75);
   
-  image(topLyr, 0, 0);
   image(toptopLyr, 0, 0);
-  fill(255, 160);
+  image(topLyr, 0, 0);
+  //image(toptopLyr, 0, 0);
+  
+  fill(255);
   wand = ellipse(mouseX, mouseY, 15, 15);
 }
 
 // ======================== EVENTS =========================
-let clicks = 0;
+//temp = 0;
 function mousePressed() {
-  // *** SHOULD REALLY USE MAP()
-  // fades out the top-most layer
-  if (!toptopLyr.background(0) || topMapAlph > 0) {
-    toptopLyr.background(topMapAlph);  // refresh background w/ new alpha
-  } // fades out the vague mountain range
-  //if (topMapAlph <= 0 || midMapClrBW <= 255) {
-   // topLyr.background(midMapClrWB);
-    //topLyr.fill(midMapClrBW);
-  //}
+  toptopLyr.background(topMapClr, topMapAlph);
+  // topLyr.rect(0, height - 100, width, 75); ~ middle layer reference
+  if((mouseY >= height-100 && mouseY <= height-25) && (mouseX <= width && mouseX >= 0)){
+     console.log("BOX HAS BEEN CLICKED");
+    
+    
+     }
+  
+  
   // testing
-  console.log("i am pressed" + clicks);
+  console.log("i am pressed");
+  console.log("temp:" + temp + " ");
+  console.log("topMapClr: " + topMapClr + "");
+  console.log("alph:" + topMapAlph + " ");
   return false;
 }
+
+
 
 // ----------------------- OTHER STUFF ---------------------
 
