@@ -118,7 +118,7 @@ function draw() {
   // <<< lotus pose silhouette >>>
   stroke(0);
   strokeWeight(1);
-  fill(random(113, 120));  // slight variations of fill
+  fill(random(100, 120));  // slight variations of fill
   beginShape();
   vertex(156, 204);
   // RIGHT SIDE ~~~~~~~~~~~~~~~~~~~~~~~
@@ -237,17 +237,22 @@ function mousePressed() {
   // MIDDLE LAYER ------------
   } else if (isCleared && clickCount >= 13) {
         //temp = midMapAlph * -1;
-        topLyr.tint(255, map(clickCount, 14, 30, 255, 0)); 
+    // checks if mouse is within the bounds of the black rect "button"
+    if((mouseY >= height-90 && mouseY <= height) && (mouseX <= width-45 && mouseX >= 45)){
+         tint(255, map(clickCount, 15, 30, 255, 0));
       // redraw shapes with new opacities
-    fill(0, map(clickCount, 14, 30, 0, 255));
-        topLyr.rect(45, height - 90, width - 90, 90);  // bottom black button
+        //topLyr.rect(45, height - 90, width - 90, 90);  // bottom black button
         // middle black triangle
-        topLyr.triangle(-50, height - 150, width + 50, height - 150, width/2, height/4 - 15);
-        topLyr.strokeWeight(5);
-        topLyr.ellipse(width/2, height/9, 75, 75);  // top black circle
+        //topLyr.triangle(-50, height - 150, width + 50, height - 150, width/2, height/4 - 15);
+       // topLyr.strokeWeight(5);
+      //  topLyr.ellipse(width/2, height/9, 75, 75);  // top black circle
+    image(topLyr, 0, 0);
+    
         clickCount++;
+    }
     //image(topLyr, 0, 0);  // middle layer
   } else {
+    
   }
   
   // testing
@@ -263,7 +268,10 @@ function mouseDragged(){
   r = floor(random(7));
   bonusClr = chakras[r]._color.hex;
   background(bonusClr);
-  
+  fill(random(70, 170));
+  if(clickCount < 50 && clickCount >= 13){
+    image(topLyr, 0, 0);
+  }
 }
 
 // ----------------------- OTHER STUFF ---------------------
